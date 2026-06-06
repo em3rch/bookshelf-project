@@ -21,8 +21,18 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
+    @app.cli.command("init-db")
+    def init_db():
+        """Create DB tables"""
+        db.create_all()
+        print("Database has been initialized.")
+
+
+    # Registering blueprints
     from app.routes.main import main_bp
     app.register_blueprint(main_bp)
+    from app.routes.auth import auth_bp
+    app.register_blueprint(auth_bp)
 
 
     return app

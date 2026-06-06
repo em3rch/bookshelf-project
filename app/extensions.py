@@ -7,5 +7,5 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 
 login_manager = LoginManager()
-login_manager.login_view = "auth.login" # redirect user to 'login' route that is being located under 'auth' blueprint.
+login_manager.login_view = "auth.login_handler" # redirect user to 'login' route that is being located under 'auth' blueprint.l
 

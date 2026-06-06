@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Bookshelf</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Bookshelf{% endblock %}
+
+{% block content %}
+
     <h1>Bookshelf</h1>
 
     <p>Welcome to Bookshelf.</p>
 
     <a href="/login">Login</a>
     <a href="/register">Register</a>
-</body>
-</html>
+
+{% endblock %}
