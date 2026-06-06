@@ -1,0 +1,1 @@
+Projekt zaliczeniowy dla przedmiotu "Programowanie komputerów" by Artem Yevtushenko
