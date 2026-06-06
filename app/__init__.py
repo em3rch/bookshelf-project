@@ -1,15 +1,6 @@
 from flask import Flask
 from app.config import Config
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-
-
-# It should be created before it is connected to Flask app
-# in order to prevent circular imports (imports in both ways).
-db = SQLAlchemy()
-
-login_manager = LoginManager()
-login_manager.login_view = "auth.login" # redirect user to 'login' route that is being located under 'auth' blueprint.
+from app.extensions import db, login_manager
 
 
 def create_app():
