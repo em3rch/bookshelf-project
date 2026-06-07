@@ -61,7 +61,7 @@ def login_handler():
 
         login_user(user)
 
-        return redirect(url_for("main.index"))
+        return redirect(url_for("books.books_list_handler"))
 
     return render_template("login.html")
 
