@@ -6,20 +6,31 @@
     <h1>My Books</h1>
     <a href="{{ url_for('auth.logout_handler') }}">Logout</a>
     <br>
-    <a href="{{ url_for('books.book_creation_handler') }}">Create new book</a>
+    <a href="{{ url_for('books.book_add_handler') }}">Create new book</a>
 
 
     {% if books %}
         <ul>
             {% for book in books %}
                 <li>
-                    {{ book.title }}
+
+                    {% if book.cover_image %}
+                        <img
+                            src="{{ url_for('static',
+                                filename='uploads/covers/' + book.cover_image) }}"
+                            width="120"
+                        >
+                    {% endif %}
+
+                    <a href="{{ url_for('books.book_details_handler', book_id=book.id) }}">
+                        {{ book.title }}
+                    </a>
                     {{ book.status }}
-                </li>
+                </li><br><br>
             {% endfor %}
         </ul>
     {% else %}
-        <p>There is no books on your shelf as of now.</p>
+        <p>There are no books on your shelf as of now.</p>
     {% endif %}
 
 

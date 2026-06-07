@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+
+    <h1>{{ book.title }}</h1>
+
+    {% if book.cover_image %}
+        <img
+            src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}"
+            alt="{{ book.title }}"
+            width="250"
+        >
+    {% elif book.cover_url %}
+        <img
+            src="{{ book.cover_url }}"
+            alt="{{ book.title }}"
+            width="250"
+        >
+    {% endif %}
+
+    <hr>
+
+    <p><strong>Title:</strong> {{ book.title }}</p>
+
+    <p>
+        <strong>Author:</strong>
+        {{ book.author if book.author else "Unknown" }}
+    </p>
+
+    <p>
+        <strong>Year:</strong>
+        {{ book.year if book.year else "-" }}
+    </p>
+
+    <p>
+        <strong>Genres:</strong>
+        {{ book.genres if book.genres else "-" }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        {{ book.status }}
+    </p>
+
+    <p>
+        <strong>Description:</strong>
+    </p>
+
+    <p>
+        {{ book.description if book.description else "No description." }}
+    </p>
+
+    <p>
+        <strong>Personal Notes:</strong>
+    </p>
+
+    <p>
+        {{ book.notes if book.notes else "No notes." }}
+    </p>
+
+    <hr>
+
+    <p>
+        <strong>Added:</strong>
+        {{ book.added_at }}
+    </p>
+
+    <p>
+        <strong>Last Updated:</strong>
+        {{ book.updated_at }}
+    </p>
+
+    <p>
+        <strong>Source:</strong>
+        {% if book.google_id %}
+            Google Books
+        {% else %}
+            Manual Entry
+        {% endif %}
+    </p>
+
+    <p>
+        <a href="{{ url_for('books.books_list_handler') }}">
+            Back to Shelf
+        </a>
+    </p>
+
+    <hr>
+
+    <p>
+        <a href="{{ url_for('books.book_edit_handler', book_id=book.id) }}">
+            Edit Book
+        </a>
+    </p>
+
+    <form
+        action="{{ url_for('books.book_delete_handler', book_id=book.id) }}"
+        method="POST"
+        onsubmit="return confirm('Delete this book?');">
+        <button type="submit">
+            Delete Book
+        </button>
+    </form>
+
+{% endblock %}

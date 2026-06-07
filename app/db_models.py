@@ -40,7 +40,6 @@ class User(UserMixin, db.Model):
 
 
 
-BOOK_STATUSES = ("wanted", "reading", "read")
 
 
 class Book(db.Model):
@@ -56,8 +55,9 @@ class Book(db.Model):
     year = db.Column(db.Integer)
     genres = db.Column(db.String(300))
     description = db.Column(db.Text)
-    cover_url = db.Column(db.String(500))
-    
+    cover_url = db.Column(db.String(500)) 
+    cover_image = db.Column(db.String(512))
+
     # User fields
     status = db.Column(db.String(20), nullable=False, default="wanted") # Can be 1 from the following: wanted | reading | read
     notes = db.Column(db.Text)
@@ -73,7 +73,20 @@ class Book(db.Model):
     )
 
 
+    BOOK_STATUSES = ("wanted", "reading", "read")
+
+
+
+    ALLOWED_COVER_EXTENSIONS = {
+        "png",
+        "jpg",
+        "jpeg",
+        "webp"
+    }
+
+
 @login_manager.user_loader # Get ID from client browser's cookies and look for a User attached to this ID in User model.
 def load_user(user_id):
     return User.query.get(int(user_id)) # .get() func accepts PrimaryKey argument
+
 
