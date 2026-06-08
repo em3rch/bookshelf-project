@@ -1,17 +1,48 @@
 {% extends "base.html" %}
-
-{% block title %}Logging in{% endblock %}
+{% block title %}Login — Bookshelf{% endblock %}
 
 {% block content %}
-    <h1>Login</h1>
+<div class="container">
+  <div class="auth-card">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-subtitle">Log in to access your personal bookshelf.</p>
 
-    <form method="POST">
-        <input name="username_or_email" placeholder="Username or email">
-        <input name="password" type="password" placeholder="Password">
+        <form method="POST" action="{{ url_for('auth.login_handler') }}">
+          <div class="mb-3">
+            <label class="form-label">Username or Email</label>
+            <input
+              type="text"
+              name="username_or_email"
+              class="form-control"
+              placeholder="Enter your username or email"
+              required
+              autofocus
+            >
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="Enter your password"
+              required
+            >
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Log In
+          </button>
+        </form>
 
-        <button type="submit">
-            Login
-        </button>
-    </form>
-
+        <hr class="divider">
+        <p class="text-center mb-0" style="font-size:0.875rem; color:var(--text-muted);">
+          Don't have an account?
+          <a href="{{ url_for('auth.register_handler') }}">Sign up</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

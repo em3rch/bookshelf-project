@@ -69,13 +69,3 @@ def search_details_handler(google_id):
         book=book,
         on_shelf=on_shelf
     )
-
-
-
-@main_bp.route("/about")
-def about():
-    return render_template("about.html")
-
-
-
-

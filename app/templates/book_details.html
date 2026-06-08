@@ -1,107 +1,111 @@
 {% extends "base.html" %}
-
-{% block title %}{{ book.title }}{% endblock %}
+{% block title %}{{ book.title }} — Bookshelf{% endblock %}
 
 {% block content %}
+<div class="container py-5">
 
-    <h1>{{ book.title }}</h1>
+  <a href="{{ url_for('books.books_list_handler') }}" class="btn btn-secondary btn-sm mb-4">
+    <i class="bi bi-arrow-left me-1"></i>Back to Shelf
+  </a>
 
-    {% if book.cover_image %}
+  <div class="row g-5">
+
+    <!-- Cover -->
+    <div class="col-md-3 text-center text-md-start">
+      {% if book.cover_image %}
         <img
-            src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}"
-            alt="{{ book.title }}"
-            width="250"
+          src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}"
+          alt="{{ book.title }}"
+          class="book-detail-cover w-100"
         >
-    {% elif book.cover_url %}
-        <img
-            src="{{ book.cover_url }}"
-            alt="{{ book.title }}"
-            width="250"
-        >
-    {% endif %}
+      {% elif book.cover_url %}
+        <img src="{{ book.cover_url }}" alt="{{ book.title }}" class="book-detail-cover w-100">
+      {% else %}
+        <div class="book-detail-cover-placeholder mx-auto">📖</div>
+      {% endif %}
+    </div>
 
-    <hr>
+    <!-- Info -->
+    <div class="col-md-9">
 
-    <p><strong>Title:</strong> {{ book.title }}</p>
+      <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-1">
+        <h1 style="font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom:0;">{{ book.title }}</h1>
+        <span class="badge-status badge-{{ book.status }}">{{ book.status }}</span>
+      </div>
 
-    <p>
-        <strong>Author:</strong>
-        {{ book.author if book.author else "Unknown" }}
-    </p>
+      <p style="color:var(--text-secondary); font-size:1rem; margin-bottom:1.5rem;">
+        {{ book.author if book.author else "Unknown author" }}
+      </p>
 
-    <p>
-        <strong>Year:</strong>
-        {{ book.year if book.year else "-" }}
-    </p>
-
-    <p>
-        <strong>Genres:</strong>
-        {{ book.genres if book.genres else "-" }}
-    </p>
-
-    <p>
-        <strong>Status:</strong>
-        {{ book.status }}
-    </p>
-
-    <p>
-        <strong>Description:</strong>
-    </p>
-
-    <p>
-        {{ book.description if book.description else "No description." }}
-    </p>
-
-    <p>
-        <strong>Personal Notes:</strong>
-    </p>
-
-    <p>
-        {{ book.notes if book.notes else "No notes." }}
-    </p>
-
-    <hr>
-
-    <p>
-        <strong>Added:</strong>
-        {{ book.added_at }}
-    </p>
-
-    <p>
-        <strong>Last Updated:</strong>
-        {{ book.updated_at }}
-    </p>
-
-    <p>
-        <strong>Source:</strong>
-        {% if book.google_id %}
-            Google Books
-        {% else %}
-            Manual Entry
+      <div class="row g-3 mb-3">
+        {% if book.year %}
+        <div class="col-auto">
+          <div class="meta-item">
+            <span class="meta-label">Year</span>
+            <span class="meta-value">{{ book.year }}</span>
+          </div>
+        </div>
         {% endif %}
-    </p>
+        {% if book.genres %}
+        <div class="col-auto">
+          <div class="meta-item">
+            <span class="meta-label">Genres</span>
+            <span class="meta-value">{{ book.genres }}</span>
+          </div>
+        </div>
+        {% endif %}
+        <div class="col-auto">
+          <div class="meta-item">
+            <span class="meta-label">Source</span>
+            <span class="meta-value">
+              {% if book.google_id %}
+                <i class="bi bi-google me-1" style="font-size:0.8rem;"></i>Google Books
+              {% else %}
+                <i class="bi bi-pencil me-1" style="font-size:0.8rem;"></i>Manual Entry
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
 
-    <p>
-        <a href="{{ url_for('books.books_list_handler') }}">
-            Back to Shelf
+      {% if book.description %}
+        <hr class="divider">
+        <div class="meta-item">
+          <span class="meta-label">Description</span>
+          <p style="color:var(--text-secondary); line-height:1.8; margin-top:0.5rem;">{{ book.description }}</p>
+        </div>
+      {% endif %}
+
+      {% if book.notes %}
+        <hr class="divider">
+        <div class="meta-item">
+          <span class="meta-label"><i class="bi bi-journal-text me-1"></i>Personal Notes</span>
+          <p style="color:var(--text-secondary); line-height:1.8; margin-top:0.5rem; font-style:italic;">{{ book.notes }}</p>
+        </div>
+      {% endif %}
+
+      <hr class="divider">
+
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1.5rem;">
+        Added: {{ book.added_at.strftime('%B %d, %Y') if book.added_at else '—' }}
+        {% if book.updated_at and book.updated_at != book.added_at %}
+          &nbsp;·&nbsp; Updated: {{ book.updated_at.strftime('%B %d, %Y') }}
+        {% endif %}
+      </div>
+
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="{{ url_for('books.book_edit_handler', book_id=book.id) }}" class="btn btn-primary">
+          <i class="bi bi-pencil me-1"></i>Edit Book
         </a>
-    </p>
+        <form action="{{ url_for('books.book_delete_handler', book_id=book.id) }}" method="POST">
+          <button type="submit" class="btn btn-danger"
+                  onclick="return confirm('Remove this book from your shelf?')">
+            <i class="bi bi-trash me-1"></i>Delete
+          </button>
+        </form>
+      </div>
 
-    <hr>
-
-    <p>
-        <a href="{{ url_for('books.book_edit_handler', book_id=book.id) }}">
-            Edit Book
-        </a>
-    </p>
-
-    <form
-        action="{{ url_for('books.book_delete_handler', book_id=book.id) }}"
-        method="POST"
-        onsubmit="return confirm('Delete this book?');">
-        <button type="submit">
-            Delete Book
-        </button>
-    </form>
-
+    </div>
+  </div>
+</div>
 {% endblock %}

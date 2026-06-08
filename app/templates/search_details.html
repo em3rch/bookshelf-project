@@ -1,74 +1,107 @@
 {% extends "base.html" %}
-
-{% block title %}{{ book["title"] }}{% endblock %}
+{% block title %}{{ book["title"] }} — Bookshelf{% endblock %}
 
 {% block content %}
+<div class="container py-5">
 
-    <a href="{{ url_for('main.index') }}">← Back to Search</a>
+  <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-sm mb-4">
+    <i class="bi bi-arrow-left me-1"></i>Back to Search
+  </a>
 
-    <h1>{{ book["title"] }}</h1>
+  <div class="row g-5">
 
-    {% if book["cover_url"] %}
-        <img src="{{ book['cover_url'] }}" alt="{{ book['title'] }}" width="200">
-    {% endif %}
+    <!-- Cover -->
+    <div class="col-md-3 text-center text-md-start">
+      {% if book["cover_url"] %}
+        <img src="{{ book['cover_url'] }}" alt="{{ book['title'] }}" class="book-detail-cover w-100">
+      {% else %}
+        <div class="book-detail-cover-placeholder mx-auto">📖</div>
+      {% endif %}
+    </div>
 
-    <p><strong>Author:</strong> {{ book["authors"] }}</p>
+    <!-- Info -->
+    <div class="col-md-9">
+      <h1 style="font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom:0.25rem;">{{ book["title"] }}</h1>
+      <p style="color: var(--text-secondary); font-size:1rem; margin-bottom:1.5rem;">{{ book["authors"] }}</p>
 
-    {% if book["year"] %}
-        <p><strong>Year:</strong> {{ book["year"] }}</p>
-    {% endif %}
-
-    {% if book["publisher"] %}
-        <p><strong>Publisher:</strong> {{ book["publisher"] }}</p>
-    {% endif %}
-
-    {% if book["pages"] %}
-        <p><strong>Pages:</strong> {{ book["pages"] }}</p>
-    {% endif %}
-
-    {% if book["genres"] %}
-        <p><strong>Genres:</strong> {{ book["genres"] }}</p>
-    {% endif %}
-
-    {% if book["language"] %}
-        <p><strong>Language:</strong> {{ book["language"] }}</p>
-    {% endif %}
-
-    {% if book["description"] %}
-        <p><strong>Description:</strong></p>
-        <p>{{ book["description"] }}</p>
-    {% else %}
-        <p><em>No description available.</em></p>
-    {% endif %}
-
-    <hr>
-
-    {% if current_user.is_authenticated %}
-
-        {% if on_shelf %}
-            <p>This book is already on your shelf.</p>
-            <a href="{{ url_for('books.books_list_handler') }}">Go to My Shelf</a>
-
-        {% else %}
-            <form
-                action="{{ url_for('books.import_google_book_handler', google_id=book['google_id']) }}"
-                method="POST">
-                <label>Add with status:</label>
-                <select name="status">
-                    <option value="wanted">Want to Read</option>
-                    <option value="reading">Reading</option>
-                    <option value="read">Read</option>
-                </select>
-
-                <button type="submit">Add to Shelf</button>
-            </form>
+      <div class="row g-3 mb-3">
+        {% if book["year"] %}
+        <div class="col-auto">
+          <div class="meta-item">
+            <span class="meta-label">Year</span>
+            <span class="meta-value">{{ book["year"] }}</span>
+          </div>
+        </div>
         {% endif %}
+        {% if book["pages"] %}
+        <div class="col-auto">
+          <div class="meta-item">
+            <span class="meta-label">Pages</span>
+            <span class="meta-value">{{ book["pages"] }}</span>
+          </div>
+        </div>
+        {% endif %}
+        {% if book["publisher"] %}
+        <div class="col-auto">
+          <div class="meta-item">
+            <span class="meta-label">Publisher</span>
+            <span class="meta-value">{{ book["publisher"] }}</span>
+          </div>
+        </div>
+        {% endif %}
+        {% if book["language"] %}
+        <div class="col-auto">
+          <div class="meta-item">
+            <span class="meta-label">Language</span>
+            <span class="meta-value">{{ book["language"] | upper }}</span>
+          </div>
+        </div>
+        {% endif %}
+      </div>
 
-    {% else %}
-        <p>
-            <a href="{{ url_for('auth.login_handler') }}">Log in</a>
-            to add this book to your shelf.
+      {% if book["genres"] %}
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem;">
+          <i class="bi bi-tag me-1"></i>{{ book["genres"] }}
         </p>
-    {% endif %}
+      {% endif %}
 
+      {% if book["description"] %}
+        <hr class="divider">
+        <p style="color:var(--text-secondary); line-height:1.8;">{{ book["description"] }}</p>
+      {% endif %}
+
+      <hr class="divider">
+
+      <!-- Add to shelf -->
+      {% if current_user.is_authenticated %}
+        {% if on_shelf %}
+          <div class="d-flex align-items-center gap-3">
+            <span style="color: var(--gold);"><i class="bi bi-check-circle-fill me-1"></i>Already on your shelf</span>
+            <a href="{{ url_for('books.books_list_handler') }}" class="btn btn-secondary btn-sm">
+              Go to My Shelf
+            </a>
+          </div>
+        {% else %}
+          <form action="{{ url_for('books.import_google_book_handler', google_id=book['google_id']) }}" method="POST">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <select name="status" class="form-select" style="width:auto;">
+                <option value="wanted">Want to Read</option>
+                <option value="reading">Reading</option>
+                <option value="read">Read</option>
+              </select>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>Add to Shelf
+              </button>
+            </div>
+          </form>
+        {% endif %}
+      {% else %}
+        <p style="color:var(--text-secondary);">
+          <a href="{{ url_for('auth.login_handler') }}">Log in</a> to add this book to your shelf.
+        </p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
 {% endblock %}

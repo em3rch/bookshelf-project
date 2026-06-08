@@ -1,54 +1,73 @@
 {% extends "base.html" %}
-
-{% block title %}Add Book{% endblock %}
+{% block title %}Add Book — Bookshelf{% endblock %}
 
 {% block content %}
+<div class="container py-4" style="max-width:680px;">
 
-    <h1>Add Book</h1>
+  <div class="page-header">
+    <h1>Add Book Manually</h1>
+    <p style="color:var(--text-muted);">Can't find your book in the search? Add it yourself.</p>
+  </div>
 
+  <div class="card">
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
 
-    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label class="form-label">Title <span class="text-accent">*</span></label>
+          <input type="text" name="title" class="form-control" placeholder="Book title" required>
+        </div>
 
-        <label>Title</label><br>
-        <input type="text" name="title" required>
-        <br><br>
+        <div class="mb-4">
+          <label class="form-label">Cover Image</label>
+          <input type="file" name="cover" class="form-control" accept=".png,.jpg,.jpeg,.webp">
+          <small style="color:var(--text-muted); font-size:0.8rem;">PNG, JPG, JPEG or WEBP</small>
+        </div>
 
-        <label>Cover</label><br>
-        <input type="file" name="cover">
-        <br><br>
+        <div class="row g-3 mb-4">
+          <div class="col-md-8">
+            <label class="form-label">Author</label>
+            <input type="text" name="author" class="form-control" placeholder="Author name">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Year</label>
+            <input type="number" name="year" class="form-control" placeholder="e.g. 1984" min="0" max="9999">
+          </div>
+        </div>
 
-        <label>Author</label><br>
-        <input type="text" name="author">
-        <br><br>
+        <div class="mb-4">
+          <label class="form-label">Genres</label>
+          <input type="text" name="genres" class="form-control" placeholder="Fiction, Science Fiction...">
+        </div>
 
-        <label>Year</label><br>
-        <input type="number" name="year">
-        <br><br>
+        <div class="mb-4">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-control" rows="4" placeholder="What is this book about?"></textarea>
+        </div>
 
-        <label>Genres</label><br>
-        <input type="text" name="genres">
-        <br><br>
-
-        <label>Description</label><br>
-        <textarea name="description"></textarea>
-        <br><br>
-
-        <label>Status</label><br>
-        <select name="status">
-            <option value="wanted">Want to read</option>
+        <div class="mb-4">
+          <label class="form-label">Status</label>
+          <select name="status" class="form-select">
+            <option value="wanted">Want to Read</option>
             <option value="reading">Reading</option>
             <option value="read">Read</option>
-        </select>
-        <br><br>
+          </select>
+        </div>
 
-        <label>Notes</label><br>
-        <textarea name="notes"></textarea>
-        <br><br>
+        <div class="mb-4">
+          <label class="form-label">Personal Notes</label>
+          <textarea name="notes" class="form-control" rows="3" placeholder="Your thoughts, quotes, reminders..."></textarea>
+        </div>
 
-        <button type="submit">
-            Add Book
-        </button>
+        <div class="d-flex gap-3">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Add to Shelf
+          </button>
+          <a href="{{ url_for('books.books_list_handler') }}" class="btn btn-secondary">Cancel</a>
+        </div>
 
-    </form>
-
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

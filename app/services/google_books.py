@@ -20,7 +20,7 @@ def search_books(query: str, lang: str = "") -> list[dict]:
         "fields": "items(id,volumeInfo(title,authors,publishedDate,pageCount,imageLinks,categories))",
         "printType": "books",
         "key": current_app.config["GOOGLE_BOOKS_API_KEY"],
-        "maxResults": 5
+        "maxResults": 40
     }
 
     if lang and lang in LANGUAGES:

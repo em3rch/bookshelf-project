@@ -18,6 +18,10 @@ def register_handler():
         if not username or not email or not password:
             flash("All fields require to be filled with data.")
             return redirect(url_for("auth.register_handler"))
+
+        if len(password) < 6:
+            flash("Password should be at least 6 characters long.")
+            return redirect(url_for("auth.register_handler"))
         
         if User.query.filter((User.username==username) | (User.email==email)).first():
             flash("User already exists.")

@@ -1,19 +1,58 @@
 {% extends "base.html" %}
-
-{% block title %}Signing up{% endblock %}
+{% block title %}Sign Up — Bookshelf{% endblock %}
 
 {% block content %}
+<div class="container">
+  <div class="auth-card">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="auth-title">Create account</h1>
+        <p class="auth-subtitle">Start building your personal bookshelf today.</p>
 
-    <h1>Register</h1>
+        <form method="POST" action="{{ url_for('auth.register_handler') }}">
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input
+              type="text"
+              name="username"
+              class="form-control"
+              placeholder="Choose a username"
+              required
+              autofocus
+            >
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              placeholder="your@email.com"
+              required
+            >
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="At least 6 characters"
+              required
+            >
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-person-plus me-2"></i>Create Account
+          </button>
+        </form>
 
-    <form method="POST">
-        <input name="username" placeholder="Username">
-        <input name="email" placeholder="Email">
-        <input name="password" type="password" placeholder="Password">
-
-        <button type="submit">
-            Submit 
-        </button>
-    </form>
-
+        <hr class="divider">
+        <p class="text-center mb-0" style="font-size:0.875rem; color:var(--text-muted);">
+          Already have an account?
+          <a href="{{ url_for('auth.login_handler') }}">Log in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

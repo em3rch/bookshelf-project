@@ -1,66 +1,92 @@
 {% extends "base.html" %}
-
-{% block title %}Bookshelf{% endblock %}
+{% block title %}Bookshelf — Search{% endblock %}
 
 {% block content %}
 
-    <h1>Welcome to Bookshelf App</h1>
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1 class="hero-title">Your Personal <span>Reading</span> Tracker</h1>
+    <p class="hero-subtitle">Search millions of books, build your shelf, and track your reading journey.</p>
 
     <form method="GET" action="{{ url_for('main.index') }}">
-
+      <div class="search-bar">
+        <i class="bi bi-search" style="color: var(--text-muted); font-size:1.1rem; flex-shrink:0;"></i>
         <input
-            type="text"
-            name="q"
-            value="{{ query }}"
-            placeholder="Search for a book..."
-            autofocus>
-
+          type="text"
+          name="q"
+          value="{{ query }}"
+          placeholder="Search by title or author..."
+          autofocus
+        >
         <select name="lang">
-            {% for code, label in languages.items() %}
-                <option value="{{ code }}" {% if lang == code %}selected{% endif %}>
-                    {{ label }}
-                </option>
-            {% endfor %}
+          {% for code, label in languages.items() %}
+            <option value="{{ code }}" {% if lang == code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
         </select>
-
-        <button type="submit">
-            Search
-        </button>
-
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
     </form>
+  </div>
+</section>
 
-    <hr>
+<!-- Results -->
+{% if results %}
+<section class="container pb-5">
+  <p class="text-muted-custom mb-4" style="font-size:0.9rem;">
+    <i class="bi bi-grid me-1"></i>{{ results | length }} results for &ldquo;{{ query }}&rdquo;
+  </p>
 
-    {% if results %}
+  <div class="book-grid">
+    {% for book in results %}
+    <a href="{{ url_for('main.search_details_handler', google_id=book['google_id']) }}" class="text-decoration-none">
+      <div class="card h-100">
+        {% if book["cover_url"] %}
+          <img src="{{ book['cover_url'] }}" alt="{{ book['title'] }}" class="book-cover">
+        {% else %}
+          <div class="book-cover-placeholder">📖</div>
+        {% endif %}
 
-        <p>{{ results | length }} results for "{{ query }}"</p>
-
-        {% for book in results %}
-        <div>
-
-            {% if book["cover_url"] %}
-                <img src="{{ book['cover_url'] }}" alt="{{ book['title'] }}" width="80">
-            {% endif %}
-
-            <div>
-                <strong>{{ book["title"] }}</strong>
-                <span>{{ book["authors"] }}</span>
-                {% if book["year"] %}<span>{{ book["year"] }}</span>{% endif %}
-                {% if book["genres"] %}<span>{{ book["genres"] }}</span>{% endif %}
-            </div>
-
-            <a href="{{ url_for('main.search_details_handler', google_id=book['google_id']) }}">
-                View Details
-            </a>
-
+        <div class="card-body">
+          <h6 class="card-title">{{ book["title"] }}</h6>
+          <p class="card-text" style="font-size:0.8rem;">{{ book["authors"] }}</p>
+          {% if book["year"] %}
+            <span style="font-size:0.75rem; color:var(--text-muted);">{{ book["year"] }}</span>
+          {% endif %}
         </div>
-        <hr>
-        {% endfor %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
 
-    {% endif %}
-
-
-    <a href="{{ url_for('auth.login_handler') }}">Login</a>
-    <a href="{{ url_for('auth.register_handler') }}">Register</a>
+{% elif not query %}
+<!-- Landing features -->
+<section class="container pb-5">
+  <div class="row g-4 justify-content-center" style="max-width:700px; margin:0 auto;">
+    <div class="col-md-4">
+      <div class="card text-center p-4">
+        <div style="font-size:2rem; margin-bottom:0.75rem;">🔍</div>
+        <h6 class="card-title">Search</h6>
+        <p class="card-text">Find any book via Google Books API.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center p-4">
+        <div style="font-size:2rem; margin-bottom:0.75rem;">📚</div>
+        <h6 class="card-title">Collect</h6>
+        <p class="card-text">Add books to your personal shelf.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center p-4">
+        <div style="font-size:2rem; margin-bottom:0.75rem;">✏️</div>
+        <h6 class="card-title">Track</h6>
+        <p class="card-text">Set statuses and leave personal notes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
 
 {% endblock %}

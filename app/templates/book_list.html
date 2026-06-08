@@ -1,39 +1,91 @@
 {% extends "base.html" %}
-
-{% block title %}Books{% endblock %}
+{% block title %}My Shelf — Bookshelf{% endblock %}
 
 {% block content %}
-    <h1>My Books</h1>
-    <a href="{{ url_for('auth.logout_handler') }}">Logout</a>
-    <br>
-    <a href="{{ url_for('books.book_add_handler') }}">Create new book</a>
+<div class="container py-4">
 
+  <!-- Header -->
+  <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+      <h1>My Shelf</h1>
+      <p class="mb-0" style="color:var(--text-muted); font-size:0.9rem;">
+        {{ books | length }} book{{ 's' if books | length != 1 else '' }} in your collection
+      </p>
+    </div>
+    <a href="{{ url_for('books.book_add_handler') }}" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Add Book Manually
+    </a>
+  </div>
 
-    {% if books %}
-        <ul>
-            {% for book in books %}
-                <li>
+  {% if books %}
+    <div class="d-flex flex-column gap-2">
+      {% for book in books %}
+      <div class="book-list-item">
 
-                    {% if book.cover_image %}
-                        <img
-                            src="{{ url_for('static',
-                                filename='uploads/covers/' + book.cover_image) }}"
-                            width="120"
-                        >
-                    {% elif book.cover_url %}
-                        <img src="{{ book.cover_url }}" alt="{{ book.title }}" width="200">
-                    {% endif %}
+        <!-- Cover -->
+        {% if book.cover_image %}
+          <img
+            src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}"
+            alt="{{ book.title }}"
+            class="book-cover-sm"
+          >
+        {% elif book.cover_url %}
+          <img src="{{ book.cover_url }}" alt="{{ book.title }}" class="book-cover-sm">
+        {% else %}
+          <div class="book-cover-placeholder-sm">📖</div>
+        {% endif %}
 
-                    <a href="{{ url_for('books.book_details_handler', book_id=book.id) }}">
-                        {{ book.title }}
-                    </a>
-                    {{ book.status }}
-                </li><br><br>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>There are no books on your shelf as of now.</p>
-    {% endif %}
+        <!-- Info -->
+        <div class="flex-grow-1 min-width-0">
+          <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
+            <div>
+              <a href="{{ url_for('books.book_details_handler', book_id=book.id) }}"
+                 style="color:var(--text-primary); font-family:var(--font-display); font-size:1rem; font-weight:600;">
+                {{ book.title }}
+              </a>
+              {% if book.author %}
+                <p class="mb-0" style="color:var(--text-muted); font-size:0.85rem;">{{ book.author }}</p>
+              {% endif %}
+              {% if book.year %}
+                <span style="color:var(--text-muted); font-size:0.8rem;">{{ book.year }}</span>
+              {% endif %}
+            </div>
+            <span class="badge-status badge-{{ book.status }}">{{ book.status }}</span>
+          </div>
+        </div>
 
+        <!-- Actions -->
+        <div class="d-flex gap-2 flex-shrink-0">
+          <a href="{{ url_for('books.book_edit_handler', book_id=book.id) }}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <form action="{{ url_for('books.book_delete_handler', book_id=book.id) }}" method="POST">
+            <button type="submit" class="btn btn-danger btn-sm"
+                    onclick="return confirm('Remove \'{{ book.title }}\' from your shelf?')">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+        </div>
 
+      </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">📚</div>
+      <h3>Your shelf is empty</h3>
+      <p style="color:var(--text-muted);">Search for a book or add one manually to get started.</p>
+      <div class="d-flex gap-3 justify-content-center mt-3">
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary">
+          <i class="bi bi-search me-1"></i>Search Books
+        </a>
+        <a href="{{ url_for('books.book_add_handler') }}" class="btn btn-secondary">
+          <i class="bi bi-plus me-1"></i>Add Manually
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
 {% endblock %}

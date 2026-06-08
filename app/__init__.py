@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from app.config import Config
 from app.extensions import db, login_manager
 
@@ -38,6 +38,27 @@ def create_app():
     from app.routes.api import api_bp
     app.register_blueprint(api_bp)
 
+    @app.errorhandler(403)
+    def forbidden(error):
+        return render_template(
+            "errors/403.html"
+        ), 403
+    
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template(
+            "errors/404.html"
+        ), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        db.session.rollback()
+        
+        return render_template(
+            "errors/500.html"
+        ), 500
+    
 
     return app
 
