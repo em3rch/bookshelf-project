@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user, login_user, logout_user
 
@@ -296,6 +298,18 @@ def api_book_delete_handler(book_id: int):
         return jsonify({
             "error": "Access forbidden."
         }), 403
+    
+    if book.cover_image:
+        path_to_cover = os.path.join(
+            "app",
+            "static",
+            "uploads",
+            "covers",
+            book.cover_image
+        )
+
+        if os.path.exists(path_to_cover):
+            os.remove(path_to_cover)
 
     db.session.delete(book)
     db.session.commit()
