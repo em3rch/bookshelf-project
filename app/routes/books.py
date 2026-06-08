@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 
 from app.db_models import Book
 from app.extensions import db
-
+from app.services.google_books import get_book
 
 books_bp = Blueprint("books", __name__)
 
@@ -237,3 +237,55 @@ def book_delete_handler(book_id: int):
 
     return redirect(url_for("books.books_list_handler"))
     
+
+@books_bp.route("/books/import/<string:google_id>", methods=["POST"])
+@login_required
+def import_google_book_handler(google_id: str):
+
+    # Prevent duplicates of Book model
+    existing = Book.query.filter_by(
+        user_id=current_user.id,
+        google_id=google_id
+    ).first()
+
+    if existing:
+        flash("This book is already on your shelf.")
+        return redirect(url_for("books.book_details_handler", book_id=existing.id))
+    
+    try:
+        data = get_book(google_id)
+    except Exception as err:
+        flash("Could not fetch book data from Google Books. Please try again.")
+        print(err)
+        return redirect(url_for("main.search_details_handler", google_id=google_id))
+
+    if data is None:
+        abort(404)
+
+    status = request.form.get("status", "wanted")
+    if status not in Book.BOOK_STATUSES:
+        status = "wanted"
+    
+    book = Book(
+        user_id=current_user.id,
+        google_id=data["google_id"],
+        title=data["title"],
+        author=data["authors"],
+        year=data["year"],
+        genres=data["genres"],
+        description=data["description"],
+        cover_url=data["cover_url"],
+        cover_image=None,
+        status=status,
+        notes=None
+    )
+
+    db.session.add(book)
+    db.session.commit()
+
+    flash(f"{book.title} has been added to your shelf.")
+
+    return redirect(url_for("books.book_details_handler", book_id=book.id))
+
+
+

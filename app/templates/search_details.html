@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book["title"] }}{% endblock %}
+
+{% block content %}
+
+    <a href="{{ url_for('main.index') }}">← Back to Search</a>
+
+    <h1>{{ book["title"] }}</h1>
+
+    {% if book["cover_url"] %}
+        <img src="{{ book['cover_url'] }}" alt="{{ book['title'] }}" width="200">
+    {% endif %}
+
+    <p><strong>Author:</strong> {{ book["authors"] }}</p>
+
+    {% if book["year"] %}
+        <p><strong>Year:</strong> {{ book["year"] }}</p>
+    {% endif %}
+
+    {% if book["publisher"] %}
+        <p><strong>Publisher:</strong> {{ book["publisher"] }}</p>
+    {% endif %}
+
+    {% if book["pages"] %}
+        <p><strong>Pages:</strong> {{ book["pages"] }}</p>
+    {% endif %}
+
+    {% if book["genres"] %}
+        <p><strong>Genres:</strong> {{ book["genres"] }}</p>
+    {% endif %}
+
+    {% if book["language"] %}
+        <p><strong>Language:</strong> {{ book["language"] }}</p>
+    {% endif %}
+
+    {% if book["description"] %}
+        <p><strong>Description:</strong></p>
+        <p>{{ book["description"] }}</p>
+    {% else %}
+        <p><em>No description available.</em></p>
+    {% endif %}
+
+    <hr>
+
+    {% if current_user.is_authenticated %}
+
+        {% if on_shelf %}
+            <p>This book is already on your shelf.</p>
+            <a href="{{ url_for('books.books_list_handler') }}">Go to My Shelf</a>
+
+        {% else %}
+            <form
+                action="{{ url_for('books.import_google_book_handler', google_id=book['google_id']) }}"
+                method="POST">
+                <label>Add with status:</label>
+                <select name="status">
+                    <option value="wanted">Want to Read</option>
+                    <option value="reading">Reading</option>
+                    <option value="read">Read</option>
+                </select>
+
+                <button type="submit">Add to Shelf</button>
+            </form>
+        {% endif %}
+
+    {% else %}
+        <p>
+            <a href="{{ url_for('auth.login_handler') }}">Log in</a>
+            to add this book to your shelf.
+        </p>
+    {% endif %}
+
+{% endblock %}

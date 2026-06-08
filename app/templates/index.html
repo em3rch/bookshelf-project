@@ -4,9 +4,61 @@
 
 {% block content %}
 
-    <h1>Bookshelf</h1>
+    <h1>Welcome to Bookshelf App</h1>
 
-    <p>Welcome to Bookshelf.</p>
+    <form method="GET" action="{{ url_for('main.index') }}">
+
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            placeholder="Search for a book..."
+            autofocus>
+
+        <select name="lang">
+            {% for code, label in languages.items() %}
+                <option value="{{ code }}" {% if lang == code %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+    <hr>
+
+    {% if results %}
+
+        <p>{{ results | length }} results for "{{ query }}"</p>
+
+        {% for book in results %}
+        <div>
+
+            {% if book["cover_url"] %}
+                <img src="{{ book['cover_url'] }}" alt="{{ book['title'] }}" width="80">
+            {% endif %}
+
+            <div>
+                <strong>{{ book["title"] }}</strong>
+                <span>{{ book["authors"] }}</span>
+                {% if book["year"] %}<span>{{ book["year"] }}</span>{% endif %}
+                {% if book["genres"] %}<span>{{ book["genres"] }}</span>{% endif %}
+            </div>
+
+            <a href="{{ url_for('main.search_details_handler', google_id=book['google_id']) }}">
+                View Details
+            </a>
+
+        </div>
+        <hr>
+        {% endfor %}
+
+    {% endif %}
+
 
     <a href="{{ url_for('auth.login_handler') }}">Login</a>
     <a href="{{ url_for('auth.register_handler') }}">Register</a>

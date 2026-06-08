@@ -85,7 +85,7 @@ class Book(db.Model):
     }
 
 
-@login_manager.user_loader # Get ID from client browser's cookies and look for a User attached to this ID in User model.
+@login_manager.user_loader # Get ID from client browser's cookies and look for User attached to this ID in User model.
 def load_user(user_id):
     return User.query.get(int(user_id)) # .get() func accepts PrimaryKey argument
 

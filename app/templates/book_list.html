@@ -20,6 +20,8 @@
                                 filename='uploads/covers/' + book.cover_image) }}"
                             width="120"
                         >
+                    {% elif book.cover_url %}
+                        <img src="{{ book.cover_url }}" alt="{{ book.title }}" width="200">
                     {% endif %}
 
                     <a href="{{ url_for('books.book_details_handler', book_id=book.id) }}">
