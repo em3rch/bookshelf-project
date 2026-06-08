@@ -1,4 +1,4 @@
-# Final project for *Programowanie komputerów" university subject by Artem Yevtushenko
+# Final project for *Programowanie komputerów* university subject by Artem Yevtushenko
 
 # Setup Instructions
 
